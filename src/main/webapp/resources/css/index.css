@@ -1,0 +1,35 @@
+a, .editable {cursor: pointer}
+#content{margin: 10px 100px; font-family: Verdana,Arial,sans-serif;}
+.title{
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 30px;
+  font-weight: 500;
+  margin-top: 20px;
+}
+#loading{position: absolute; left: 0; top:0; width: 100%; height: 100%; z-index: 10; background-color: gray; opacity: 0.4}
+#loading img{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -5px;
+}
+.linkToOther{margin-bottom: 20px}
+.linkToOther a {color: forestgreen;}
+.itemsCntr{margin-left: 15px; margin-bottom: 10px}
+
+.progressNumDiv {float: left; font-weight: bold; width: 30px;}
+
+#itemsCntr {width: 750px}
+.titleRow {font-weight: bold;}
+.cell3 {float: left; width: 32%}
+.cell4 {float: left; width: 24%}
+.ch {float: left; margin-right: 5px;}
+.delItemRowCtl {cursor: pointer}
+
+.orderRowCtl {background-color: rgba(128, 128, 128, 0.20); border-top: 2px solid #fff; cursor: pointer}
+
+.addNewItemCtl, #addItemRowCtl {cursor: pointer; color: gray;}
+#oderFrm{width: 650px;}
+
+

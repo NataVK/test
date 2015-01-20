@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+              http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+         http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+  <context:annotation-config/>
+
+  <context:component-scan base-package="com.shop.backend,com.shop.frontend.bean"/>
+
+  <jpa:repositories base-package="com.shop.backend.repository"/>
+
+  <tx:annotation-driven/>
+
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>
+
+  <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+    <property name="driverClass" value="${jdbc.driver}"/>
+    <property name="jdbcUrl" value="${jdbc.url}"/>
+    <property name="user" value="${jdbc.username}"/>
+    <property name="password" value="${jdbc.password}"/>
+
+    <property name="maxPoolSize" value="10"/>
+    <property name="maxStatements" value="0"/>
+    <property name="minPoolSize" value="5"/>
+    <property name="idleConnectionTestPeriod" value="300"/>
+    <property name="preferredTestQuery" value="select 1;"/>
+  </bean>
+
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    <property name="dataSource" ref="pooledDataSource"/>
+  </bean>
+
+  <task:annotation-driven executor="taskExecutor"/>
+  <task:executor id="taskExecutor" pool-size="10"/>
+  <task:scheduler id="taskScheduler" pool-size="1"/>
+
+  <beans profile="mysql">
+    <context:property-placeholder location="classpath:/mysql.properties"
+                                  system-properties-mode="OVERRIDE" ignore-resource-not-found="true"/>
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="persistenceUnitName" value="ShopPersistenceUnit"/>
+      <property name="dataSource" ref="pooledDataSource"/>
+
+      <property name="jpaVendorAdapter">
+        <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+          <property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+          <property name="showSql" value="false" />
+          <property name="generateDdl" value="true"/>
+        </bean>
+      </property>
+      <property name="jpaProperties">
+        <props>
+          <prop key="hibernate.hbm2ddl.auto">update</prop>
+          <prop key="hibernate.id.new_generator_mappings">true</prop>
+          <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+        </props>
+      </property>
+    </bean>
+  </beans>
+
+  <beans profile="postgresql">
+    <context:property-placeholder location="classpath:/postgresql.properties"
+                                  system-properties-mode="OVERRIDE" ignore-resource-not-found="true"/>
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="persistenceUnitName" value="ShopPersistenceUnit"/>
+      <property name="dataSource" ref="pooledDataSource"/>
+
+      <property name="jpaVendorAdapter">
+        <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+          <property name="databasePlatform" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
+          <property name="showSql" value="false" />
+          <property name="generateDdl" value="true"/>
+        </bean>
+      </property>
+      <property name="jpaProperties">
+        <props>
+          <prop key="hibernate.hbm2ddl.auto">update</prop>
+          <prop key="hibernate.id.new_generator_mappings">true</prop>
+          <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+        </props>
+      </property>
+    </bean>
+  </beans>
+</beans>

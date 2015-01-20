@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+  <bean id="userDetailsServiceImpl" class="com.shop.security.UserDetailsServiceImpl"/>
+  <bean id="authenticationSuccessHandlerImpl" class="com.shop.security.AuthenticationSuccessHandlerImpl"/>
+
+  <security:http use-expressions="true" auto-config="true">
+    <security:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
+    <security:intercept-url pattern="/user/**" access="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')"/>
+    <security:intercept-url pattern="/**" access="permitAll"/>
+    <security:form-login login-page="/auth/login" authentication-success-handler-ref="authenticationSuccessHandlerImpl" authentication-failure-url="/auth/login?fail=true"/>
+    <security:logout logout-url="/logout" logout-success-url="/auth/login"/>
+  </security:http>
+
+  <security:authentication-manager alias="authenticationManager">
+    <security:authentication-provider user-service-ref="userDetailsServiceImpl">
+    </security:authentication-provider>
+    <security:authentication-provider>
+      <security:user-service>
+        <security:user name="admin" password="admin" authorities="ROLE_ADMIN"/>
+      </security:user-service>
+    </security:authentication-provider>
+  </security:authentication-manager>
+
+</beans>
